@@ -2,20 +2,21 @@ package server
 
 import (
 	"example-stomp/server/pool"
+	"flag"
 	"fmt"
 	"log"
 
 	stomp "github.com/go-stomp/stomp/v3"
 )
 
-const DESTINATION = "whois"
+var queueName = flag.String("queue", "/queue/client_test", "Destination queue")
 
 func InitConn() (*pool.TcpConnPool, error) {
 	tcpConfig := pool.TcpConfig{
 		Host:         "localhost",
 		Port:         61613,
-		Username:     "guest",
-		Password:     "guest",
+		Username:     "",
+		Password:     "",
 		MaxIdleConns: 10,
 		MaxOpenConn:  20,
 	}
@@ -48,6 +49,7 @@ func ListenKoneksi() {
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}
+		// time.Sleep(5 * time.Second)
 	}
 }
 
@@ -55,7 +57,7 @@ func ListenKoneksi() {
 // func handler handle msg reveived from destination
 func Subscribe(connPool *pool.TcpConnPool) error {
 	conn := NewConn(connPool)
-	sub, err := conn.Subscribe(DESTINATION, stomp.AckAuto)
+	sub, err := conn.Subscribe(*queueName, stomp.AckAuto)
 	if err != nil {
 		fmt.Println(err)
 		return err

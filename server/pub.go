@@ -6,13 +6,13 @@ import (
 )
 
 func SendMessage() {
-	//1. init amqp
+	//1. init stomp
 	connPool, err := InitConn()
 	if err != nil {
 		log.Fatal("error when init connection ", err)
 	}
 	conn := NewConn(connPool)
-	err = conn.Send(DESTINATION, "text/plain", []byte("hello world"), nil)
+	err = conn.Send(*queueName, "text/plain", []byte("hello world"), nil)
 	if err != nil {
 		println("failed to send to server", err)
 		return
